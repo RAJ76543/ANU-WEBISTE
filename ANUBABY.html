@@ -1,0 +1,722 @@
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Love Letter to Anu</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/CustomEase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/EasePack.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Flip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Parisienne&family=Sacramento&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+<style>
+  /* Custom fonts */
+  .font-greatvibes {
+    font-family: 'Great Vibes', cursive;
+  }
+  .font-parisienne {
+    font-family: 'Parisienne', cursive;
+  }
+  .font-sacramento {
+    font-family: 'Sacramento', cursive;
+  }
+  /* Text selection disabled for the main message */
+  .noselect {
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+  }
+  /* Glowing text shadows */
+  .glow-text {
+    text-shadow:
+      0 0 6px rgba(255, 182, 193, 0.8),
+      0 0 12px rgba(255, 105, 180, 0.7),
+      0 0 18px rgba(255, 20, 147, 0.6),
+      0 0 24px rgba(255, 20, 147, 0.5);
+  }
+  /* Neon glow for Anu's name */
+  .neon-rosegold {
+    color: #f9c5d1;
+    text-shadow:
+      0 0 5px #f9c5d1,
+      0 0 10px #f9c5d1,
+      0 0 20px #f9c5d1,
+      0 0 40px #f9c5d1,
+      0 0 80px #f9c5d1;
+  }
+  /* Heartbeat pulse animation */
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.1); }
+    50% { transform: scale(1.15); }
+    75% { transform: scale(1.1); }
+  }
+  .heartbeat {
+    animation: heartbeat 2.5s ease-in-out infinite;
+  }
+  /* Floating animation */
+  @keyframes floaty {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-10px) translateX(5px); }
+  }
+  .floaty {
+    animation: floaty 6s ease-in-out infinite;
+  }
+  /* Floating butterflies and sparkles orbit container */
+  .orbit-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  /* Butterfly and sparkle styles */
+  .butterfly, .sparkle {
+    position: absolute;
+    will-change: transform, opacity;
+    pointer-events: none;
+  }
+  /* Bokeh shimmer overlay */
+  .bokeh-overlay {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 20% 30%, rgba(255 192 203 / 0.15), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(255 182 193 / 0.12), transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255 105 180 / 0.1), transparent 60%);
+    mix-blend-mode: screen;
+    animation: shimmer 15s linear infinite;
+    z-index: 10;
+  }
+  @keyframes shimmer {
+    0% { background-position: 0% 0%, 100% 100%, 50% 50%; }
+    100% { background-position: 100% 100%, 0% 0%, 50% 50%; }
+  }
+  /* Scrollbar hidden for mobile */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide outline on tap for better mobile UX */
+  *:focus {
+    outline: none;
+  }
+</style>
+</head>
+<body class="relative overflow-hidden min-h-screen bg-gradient-to-b from-pink-300 via-purple-400 to-indigo-900">
+
+<!-- Animated Gradient Background -->
+<div id="animated-gradient" class="fixed inset-0 -z-20"></div>
+
+<!-- Floating petals container -->
+<div id="petals-container" class="fixed inset-0 pointer-events-none -z-10"></div>
+
+<!-- Floating sparkles container -->
+<div id="sparkles-container" class="fixed inset-0 pointer-events-none -z-10"></div>
+
+<!-- Floating hearts container -->
+<div id="hearts-container" class="fixed inset-0 pointer-events-none -z-10"></div>
+
+<!-- Floating clouds container -->
+<div id="clouds-container" class="fixed inset-0 pointer-events-none -z-15"></div>
+
+<!-- Bokeh shimmer overlay -->
+<div class="bokeh-overlay"></div>
+
+<!-- Center message container -->
+<main class="relative z-30 flex flex-col items-center justify-center min-h-screen px-6 text-center select-none">
+  <!-- Glowing heart behind text -->
+  <div aria-hidden="true" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+    <svg class="w-72 h-72 md:w-96 md:h-96 text-pink-400 opacity-30 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" >
+      <path d="M12 21s-6-4.35-6-10a6 6 0 0 1 12 0c0 5.65-6 10-6 10z" />
+    </svg>
+  </div>
+
+  <!-- Large glowing name "Anu" -->
+  <h1 id="anu-name" class="font-greatvibes neon-rosegold text-7xl sm:text-9xl md:text-[10rem] leading-none relative heartbeat floaty select-none" aria-label="Anu">
+    Anu
+    <!-- Orbiting sparkles and butterflies container -->
+    <div id="orbiting-elements" class="absolute inset-0 pointer-events-none"></div>
+  </h1>
+
+  <!-- The heartfelt message lines -->
+  <section id="message" class="mt-8 max-w-xl sm:max-w-2xl text-white font-parisienne text-2xl sm:text-3xl md:text-4xl glow-text leading-relaxed"></section>
+
+  <!-- Floating glowing letters "I Love You Anu" -->
+  <div id="floating-letters" class="fixed top-1/3 left-1/2 -translate-x-1/2 pointer-events-none z-20 flex space-x-1 sm:space-x-3"></div>
+</main>
+
+<!-- Love birds container -->
+<div id="love-birds-container" class="fixed inset-0 pointer-events-none -z-10"></div>
+
+<!-- Shooting stars container -->
+<div id="shooting-stars-container" class="fixed inset-0 pointer-events-none -z-10"></div>
+
+<!-- Glowing beating heart bottom center -->
+<div aria-hidden="true" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+  <svg class="w-20 h-20 text-pink-400 opacity-70 heartbeat" viewBox="0 0 24 24" fill="currentColor" >
+    <path d="M12 21s-6-4.35-6-10a6 6 0 0 1 12 0c0 5.65-6 10-6 10z" />
+  </svg>
+</div>
+
+<!-- Floating heart icon for music control bottom right -->
+<button id="music-toggle" aria-label="Toggle music" class="fixed bottom-6 right-6 z-30 w-14 h-14 rounded-full bg-pink-400 bg-opacity-80 backdrop-blur-sm flex items-center justify-center shadow-lg active:scale-90 transition-transform" aria-pressed="false" tabindex="0">
+  <i id="music-icon" class="fas fa-heart text-white text-2xl animate-pulse"></i>
+</button>
+
+<!-- Background music -->
+<audio id="bg-music" loop preload="auto" src="https://cdn.pixabay.com/download/audio/2022/03/23/audio_3a3a3a3a3a.mp3?filename=romantic-piano-11242.mp3" crossorigin="anonymous"></audio>
+
+<script>
+  // Setup animated gradient background with GSAP
+  const animatedGradient = document.getElementById('animated-gradient');
+  animatedGradient.style.position = 'fixed';
+  animatedGradient.style.inset = '0';
+  animatedGradient.style.zIndex = '-20';
+  animatedGradient.style.background = 'linear-gradient(270deg, #fbb1b1, #a17fe0, #1e3c72, #000000)';
+  animatedGradient.style.backgroundSize = '800% 800%';
+
+  gsap.to(animatedGradient, {
+    backgroundPosition: '800% 50%',
+    duration: 60,
+    ease: 'linear',
+    repeat: -1,
+    yoyo: true,
+  });
+
+  // Create floating petals
+  const petalsContainer = document.getElementById('petals-container');
+  const petalsCount = 30;
+  const petals = [];
+
+  function createPetal() {
+    const petal = document.createElement('img');
+    petal.src = 'https://placehold.co/24x24/ffb6c1/fff/png?text=🌹';
+    petal.alt = 'Delicate pink rose petal floating gently in the air, soft edges and translucent texture';
+    petal.className = 'absolute w-6 h-6 opacity-80 pointer-events-none select-none';
+    petalsContainer.appendChild(petal);
+    return petal;
+  }
+
+  for(let i=0; i < petalsCount; i++) {
+    petals.push(createPetal());
+  }
+
+  petals.forEach((petal, i) => {
+    const delay = Math.random() * 10;
+    const duration = 15 + Math.random() * 15;
+    const startX = Math.random() * window.innerWidth;
+    const startY = Math.random() * window.innerHeight;
+    const scale = 0.6 + Math.random() * 0.8;
+    petal.style.left = `${startX}px`;
+    petal.style.top = `${startY}px`;
+    petal.style.transform = `scale(${scale}) rotate(${Math.random()*360}deg)`;
+
+    gsap.to(petal, {
+      y: window.innerHeight + 50,
+      x: `+=${(Math.random() - 0.5) * 100}`,
+      rotation: '+=360',
+      duration: duration,
+      ease: 'linear',
+      repeat: -1,
+      delay: delay,
+      onRepeat() {
+        petal.style.left = `${Math.random() * window.innerWidth}px`;
+        petal.style.top = `-50px`;
+      }
+    });
+  });
+
+  // Create floating sparkles
+  const sparklesContainer = document.getElementById('sparkles-container');
+  const sparklesCount = 40;
+  const sparkles = [];
+
+  function createSparkle() {
+    const sparkle = document.createElement('img');
+    sparkle.src = 'https://placehold.co/12x12/fff8dc/fff/png?text=✦';
+    sparkle.alt = 'Tiny glowing sparkle twinkling softly with a warm white light';
+    sparkle.className = 'absolute w-3 h-3 opacity-70 pointer-events-none select-none';
+    sparklesContainer.appendChild(sparkle);
+    return sparkle;
+  }
+
+  for(let i=0; i < sparklesCount; i++) {
+    sparkles.push(createSparkle());
+  }
+
+  sparkles.forEach((sparkle) => {
+    const delay = Math.random() * 10;
+    const duration = 6 + Math.random() * 6;
+    const startX = Math.random() * window.innerWidth;
+    const startY = Math.random() * window.innerHeight;
+    sparkle.style.left = `${startX}px`;
+    sparkle.style.top = `${startY}px`;
+
+    gsap.to(sparkle, {
+      opacity: 0,
+      duration: duration / 2,
+      yoyo: true,
+      repeat: -1,
+      ease: 'sine.inOut',
+      delay: delay,
+    });
+  });
+
+  // Create floating hearts
+  const heartsContainer = document.getElementById('hearts-container');
+  const heartsCount = 25;
+  const hearts = [];
+
+  function createHeart() {
+    const heart = document.createElement('img');
+    heart.src = 'https://placehold.co/20x20/ff69b4/fff/png?text=❤';
+    heart.alt = 'Small glowing pink heart gently floating upwards with a soft glow';
+    heart.className = 'absolute w-5 h-5 opacity-75 pointer-events-none select-none';
+    heartsContainer.appendChild(heart);
+    return heart;
+  }
+
+  for(let i=0; i < heartsCount; i++) {
+    hearts.push(createHeart());
+  }
+
+  hearts.forEach((heart) => {
+    const delay = Math.random() * 12;
+    const duration = 12 + Math.random() * 10;
+    const startX = Math.random() * window.innerWidth;
+    const startY = window.innerHeight + 20;
+    heart.style.left = `${startX}px`;
+    heart.style.top = `${startY}px`;
+
+    gsap.to(heart, {
+      y: -30,
+      x: `+=${(Math.random() - 0.5) * 80}`,
+      rotation: '+=180',
+      duration: duration,
+      ease: 'linear',
+      repeat: -1,
+      delay: delay,
+      onRepeat() {
+        heart.style.left = `${Math.random() * window.innerWidth}px`;
+        heart.style.top = `${window.innerHeight + 20}px`;
+      }
+    });
+  });
+
+  // Create floating clouds
+  const cloudsContainer = document.getElementById('clouds-container');
+  const cloudsCount = 8;
+  const clouds = [];
+
+  function createCloud() {
+    const cloud = document.createElement('img');
+    cloud.src = 'https://placehold.co/120x60/ffffff/cccccc/png?text=☁';
+    cloud.alt = 'Soft white fluffy cloud drifting slowly across the dreamy sky';
+    cloud.className = 'absolute w-28 h-14 opacity-30 pointer-events-none select-none';
+    cloudsContainer.appendChild(cloud);
+    return cloud;
+  }
+
+  for(let i=0; i < cloudsCount; i++) {
+    clouds.push(createCloud());
+  }
+
+  clouds.forEach((cloud) => {
+    const delay = Math.random() * 20;
+    const duration = 40 + Math.random() * 40;
+    const startX = -150 - Math.random() * 300;
+    const startY = Math.random() * window.innerHeight * 0.6;
+    cloud.style.left = `${startX}px`;
+    cloud.style.top = `${startY}px`;
+
+    gsap.to(cloud, {
+      x: window.innerWidth + 300,
+      duration: duration,
+      ease: 'linear',
+      repeat: -1,
+      delay: delay,
+      onRepeat() {
+        cloud.style.left = `${-150 - Math.random() * 300}px`;
+        cloud.style.top = `${Math.random() * window.innerHeight * 0.6}px`;
+      }
+    });
+  });
+
+  // Parallax effect on scroll and pointer move for petals, sparkles, hearts, clouds
+  // On mobile, use device orientation if available, fallback to pointermove
+  let pointerX = window.innerWidth / 2;
+  let pointerY = window.innerHeight / 2;
+
+  function parallaxMove() {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const offsetX = (pointerX - centerX) / centerX;
+    const offsetY = (pointerY - centerY) / centerY;
+
+    petals.forEach((petal, i) => {
+      const depth = (i % 5 + 1) * 2;
+      gsap.to(petal, {
+        x: offsetX * depth,
+        y: offsetY * depth,
+        duration: 0.5,
+        ease: 'power1.out',
+      });
+    });
+    sparkles.forEach((sparkle, i) => {
+      const depth = (i % 3 + 1) * 1.5;
+      gsap.to(sparkle, {
+        x: offsetX * depth,
+        y: offsetY * depth,
+        duration: 0.5,
+        ease: 'power1.out',
+      });
+    });
+    hearts.forEach((heart, i) => {
+      const depth = (i % 4 + 1) * 2.5;
+      gsap.to(heart, {
+        x: offsetX * depth,
+        y: offsetY * depth,
+        duration: 0.5,
+        ease: 'power1.out',
+      });
+    });
+    clouds.forEach((cloud, i) => {
+      const depth = (i % 2 + 1) * 5;
+      gsap.to(cloud, {
+        x: offsetX * depth,
+        y: offsetY * depth,
+        duration: 0.5,
+        ease: 'power1.out',
+      });
+    });
+  }
+
+  window.addEventListener('pointermove', e => {
+    pointerX = e.clientX;
+    pointerY = e.clientY;
+    parallaxMove();
+  });
+
+  // Device orientation for mobile parallax
+  window.addEventListener('deviceorientation', e => {
+    if(e.gamma !== null && e.beta !== null) {
+      // gamma: left to right [-90,90], beta: front to back [-180,180]
+      pointerX = window.innerWidth / 2 + (e.gamma / 90) * (window.innerWidth / 2);
+      pointerY = window.innerHeight / 2 + (e.beta / 180) * (window.innerHeight / 2);
+      parallaxMove();
+    }
+  });
+
+  // Center message lines with fade-in per line animation
+  const messageLines = [
+    "Anu, my heartbeat...",
+    "My world feels cold without your smile.",
+    "I'm truly sorry...",
+    "I love you more than words can ever say.",
+    "Please smile for me again."
+  ];
+
+  const messageContainer = document.getElementById('message');
+
+  async function animateMessage() {
+    for(let i=0; i < messageLines.length; i++) {
+      const line = document.createElement('p');
+      line.textContent = messageLines[i];
+      line.className = 'opacity-0 mb-4';
+      messageContainer.appendChild(line);
+      await gsap.to(line, {opacity: 1, duration: 2, ease: 'power2.inOut'});
+      await new Promise(r => setTimeout(r, 1200));
+    }
+  }
+
+  animateMessage();
+
+  // Orbiting sparkles and butterflies around "Anu"
+  const orbitContainer = document.getElementById('orbiting-elements');
+  const orbitRadius = 80;
+  const orbitCenterX = 0;
+  const orbitCenterY = 0;
+
+  // Create butterflies and sparkles orbiting
+  const orbitElementsCount = 8;
+  const orbitElements = [];
+
+  function createOrbitElement(type) {
+    const el = document.createElement('img');
+    if(type === 'butterfly') {
+      el.src = 'https://placehold.co/24x24/ff69b4/fff/png?text=🦋';
+      el.alt = 'Delicate pink butterfly fluttering softly with translucent wings';
+      el.className = 'butterfly w-6 h-6 opacity-90';
+    } else {
+      el.src = 'https://placehold.co/12x12/fff0f5/fff/png?text=✧';
+      el.alt = 'Tiny soft glowing sparkle twinkling gently';
+      el.className = 'sparkle w-3 h-3 opacity-80';
+    }
+    orbitContainer.appendChild(el);
+    return el;
+  }
+
+  for(let i=0; i < orbitElementsCount; i++) {
+    const type = i % 2 === 0 ? 'butterfly' : 'sparkle';
+    orbitElements.push(createOrbitElement(type));
+  }
+
+  // Animate orbiting elements in circle with GSAP
+  orbitElements.forEach((el, i) => {
+    const angle = (360 / orbitElementsCount) * i;
+    gsap.to(el, {
+      motionPath: {
+        path: [
+          {x: orbitRadius * Math.cos(angle * Math.PI / 180), y: orbitRadius * Math.sin(angle * Math.PI / 180)},
+          {x: orbitRadius * Math.cos((angle + 180) * Math.PI / 180), y: orbitRadius * Math.sin((angle + 180) * Math.PI / 180)},
+          {x: orbitRadius * Math.cos(angle * Math.PI / 180), y: orbitRadius * Math.sin(angle * Math.PI / 180)}
+        ],
+        curviness: 1.5,
+        autoRotate: true
+      },
+      duration: 20 + Math.random() * 10,
+      repeat: -1,
+      ease: 'linear',
+      delay: i * 2,
+    });
+  });
+
+  // Floating glowing letters spelling "I Love You Anu"
+  const floatingLettersContainer = document.getElementById('floating-letters');
+  const floatingText = "I Love You Anu";
+  const letters = floatingText.split('');
+
+  letters.forEach((letter, i) => {
+    const span = document.createElement('span');
+    span.textContent = letter === ' ' ? '\u00A0' : letter;
+    span.className = 'text-pink-300 text-4xl sm:text-5xl font-sacramento select-none opacity-0 drop-shadow-[0_0_6px_rgba(255,182,193,0.8)]';
+    floatingLettersContainer.appendChild(span);
+    gsap.to(span, {
+      opacity: 1,
+      y: -10,
+      duration: 1.5,
+      delay: i * 0.5 + 5,
+      yoyo: true,
+      repeat: -1,
+      ease: 'sine.inOut',
+    });
+  });
+
+  // Love birds flying across the screen
+  const loveBirdsContainer = document.getElementById('love-birds-container');
+  const loveBirdsCount = 4;
+  const loveBirds = [];
+
+  function createLoveBird() {
+    const bird = document.createElement('img');
+    bird.src = 'https://placehold.co/48x32/ff69b4/fff/png?text=🐦';
+    bird.alt = 'Cute pink love bird flying gracefully with wings spread';
+    bird.className = 'absolute w-12 h-8 opacity-90 select-none pointer-events-none';
+    loveBirdsContainer.appendChild(bird);
+    return bird;
+  }
+
+  for(let i=0; i < loveBirdsCount; i++) {
+    loveBirds.push(createLoveBird());
+  }
+
+  loveBirds.forEach((bird, i) => {
+    const startY = 50 + Math.random() * (window.innerHeight * 0.5);
+    const duration = 20 + Math.random() * 15;
+    const delay = i * 7;
+
+    function fly() {
+      bird.style.top = `${startY}px`;
+      bird.style.left = `-${50 + Math.random() * 100}px`;
+      gsap.to(bird, {
+        x: window.innerWidth + 150,
+        y: `+=${(Math.random() - 0.5) * 50}`,
+        rotation: (Math.random() - 0.5) * 20,
+        duration: duration,
+        ease: 'power1.inOut',
+        onComplete: fly,
+        delay: delay,
+      });
+    }
+    fly();
+  });
+
+  // Shooting stars container
+  const shootingStarsContainer = document.getElementById('shooting-stars-container');
+  const shootingStarsCount = 6;
+  const shootingStars = [];
+
+  function createShootingStar() {
+    const star = document.createElement('img');
+    star.src = 'https://placehold.co/24x4/fff0f5/fff/png?text=✦';
+    star.alt = 'Bright shooting star streaking across the night sky with sparkling trail';
+    star.className = 'absolute w-6 h-1 opacity-80 select-none pointer-events-none';
+    shootingStarsContainer.appendChild(star);
+    return star;
+  }
+
+  for(let i=0; i < shootingStarsCount; i++) {
+    shootingStars.push(createShootingStar());
+  }
+
+  shootingStars.forEach((star, i) => {
+    const delay = i * 8 + Math.random() * 8;
+    const duration = 3 + Math.random() * 2;
+
+    function shoot() {
+      star.style.top = `${Math.random() * window.innerHeight * 0.6}px`;
+      star.style.left = `-${20}px`;
+      gsap.to(star, {
+        x: window.innerWidth + 40,
+        y: `+=${50 + Math.random() * 50}`,
+        opacity: 1,
+        duration: duration,
+        ease: 'power1.out',
+        onComplete: () => {
+          gsap.to(star, {opacity: 0, duration: 0.5, onComplete: shoot});
+        },
+        delay: delay,
+      });
+    }
+    shoot();
+  });
+
+  // Glowing beating heart on loop (already in DOM)
+
+  // Music control logic
+  const musicToggle = document.getElementById('music-toggle');
+  const musicIcon = document.getElementById('music-icon');
+  const bgMusic = document.getElementById('bg-music');
+  let musicPlaying = false;
+  let userInteracted = false;
+
+  // On first tap anywhere, start music softly
+  function startMusicOnUserInteraction() {
+    if(userInteracted) return;
+    userInteracted = true;
+    bgMusic.volume = 0.15;
+    bgMusic.play().catch(() => {});
+    musicPlaying = true;
+    musicToggle.setAttribute('aria-pressed', 'true');
+    musicIcon.classList.add('animate-pulse');
+  }
+
+  window.addEventListener('touchstart', startMusicOnUserInteraction, {once: true});
+  window.addEventListener('click', startMusicOnUserInteraction, {once: true});
+
+  musicToggle.addEventListener('click', () => {
+    if(musicPlaying) {
+      bgMusic.pause();
+      musicPlaying = false;
+      musicToggle.setAttribute('aria-pressed', 'false');
+      musicIcon.classList.remove('animate-pulse');
+      musicIcon.classList.remove('fa-heart');
+      musicIcon.classList.add('fa-heart-broken');
+    } else {
+      bgMusic.play().catch(() => {});
+      musicPlaying = true;
+      musicToggle.setAttribute('aria-pressed', 'true');
+      musicIcon.classList.remove('fa-heart-broken');
+      musicIcon.classList.add('fa-heart');
+      musicIcon.classList.add('animate-pulse');
+    }
+  });
+
+  // Burst of hearts or petals on tap or hold
+  function createBurstParticle(type) {
+    const particle = document.createElement('img');
+    if(type === 'heart') {
+      particle.src = 'https://placehold.co/20x20/ff69b4/fff/png?text=❤';
+      particle.alt = 'Small glowing pink heart bursting gently';
+      particle.className = 'absolute w-5 h-5 opacity-90 pointer-events-none select-none';
+    } else {
+      particle.src = 'https://placehold.co/24x24/ffb6c1/fff/png?text=🌹';
+      particle.alt = 'Delicate pink rose petal bursting gently';
+      particle.className = 'absolute w-6 h-6 opacity-90 pointer-events-none select-none';
+    }
+    document.body.appendChild(particle);
+    return particle;
+  }
+
+  function burstAt(x, y) {
+    const count = 15;
+    for(let i=0; i < count; i++) {
+      const type = i % 2 === 0 ? 'heart' : 'petal';
+      const particle = createBurstParticle(type);
+      particle.style.left = `${x}px`;
+      particle.style.top = `${y}px`;
+      const angle = (360 / count) * i + (Math.random() * 20 - 10);
+      const distance = 80 + Math.random() * 40;
+      const duration = 1 + Math.random() * 0.8;
+
+      gsap.to(particle, {
+        x: distance * Math.cos(angle * Math.PI / 180),
+        y: distance * Math.sin(angle * Math.PI / 180),
+        opacity: 0,
+        rotation: 360 * (Math.random() > 0.5 ? 1 : -1),
+        duration: duration,
+        ease: 'power1.out',
+        onComplete: () => {
+          particle.remove();
+        }
+      });
+    }
+  }
+
+  // Tap or hold anywhere triggers burst
+  let burstTimeout;
+  let burstActive = false;
+
+  function onPointerDown(e) {
+    burstTimeout = setTimeout(() => {
+      burstActive = true;
+      burstAt(e.clientX, e.clientY);
+    }, 200);
+  }
+  function onPointerUp(e) {
+    clearTimeout(burstTimeout);
+    if(!burstActive) {
+      burstAt(e.clientX, e.clientY);
+    }
+    burstActive = false;
+  }
+
+  window.addEventListener('pointerdown', onPointerDown);
+  window.addEventListener('pointerup', onPointerUp);
+
+  // Accessibility: prevent zoom on double tap on mobile
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function (event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, false);
+
+  // Responsive resize handler to reposition petals, sparkles, hearts, clouds on resize
+  window.addEventListener('resize', () => {
+    petals.forEach((petal) => {
+      petal.style.left = `${Math.random() * window.innerWidth}px`;
+      petal.style.top = `${Math.random() * window.innerHeight}px`;
+    });
+    sparkles.forEach((sparkle) => {
+      sparkle.style.left = `${Math.random() * window.innerWidth}px`;
+      sparkle.style.top = `${Math.random() * window.innerHeight}px`;
+    });
+    hearts.forEach((heart) => {
+      heart.style.left = `${Math.random() * window.innerWidth}px`;
+      heart.style.top = `${window.innerHeight + 20}px`;
+    });
+    clouds.forEach((cloud) => {
+      cloud.style.left = `${-150 - Math.random() * 300}px`;
+      cloud.style.top = `${Math.random() * window.innerHeight * 0.6}px`;
+    });
+  });
+</script>
+</body>
+</html>
